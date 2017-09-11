@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("opb")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("opb | Offline Pirate Bay")]
+[assembly: AssemblyDescription("This application is a fully offline browser for The Pirate Bay")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("opb")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2017")]
+[assembly: AssemblyCompany("/u/AyrA_ch")]
+[assembly: AssemblyProduct("Offline Pirate Bay")]
+[assembly: AssemblyCopyright("Copyright © /u/AyrA_ch 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
