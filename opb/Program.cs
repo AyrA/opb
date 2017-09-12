@@ -8,32 +8,49 @@ namespace opb
 {
     class Program
     {
-        //Regex to match one line
+        /// <summary>
+        /// Regex to match one line
+        /// </summary>
+        /// <remarks>Individual Years have categories with their torrents which we ignore</remarks>
         public const string REGEX = "^(.*);(.*);\"(.*)\";(\\d*)(;\\d*)?$";
+        /// <summary>
+        /// Name of the database file
+        /// </summary>
         public const string DBNAME = "OPB.db3";
+        /// <summary>
+        /// Chars we use to split search terms
+        /// </summary>
         public const string SPLITCHARS = "\t \r\n,.-'\"(){}[]/\\+%";
 
+        /// <summary>
+        /// Main entry point
+        /// </summary>
+        /// <param name="args">Command line arguments</param>
+        /// <remarks>This switches to CLI mode if <paramref name="args"/> is not empty</remarks>
         [STAThread]
         static void Main(string[] args)
         {
 #if DEBUG
             args = new string[] { "/S", "GTA", "vice" };
 #endif
+            //Show help if requested
             if (args.Contains("/?") || args.Contains("--help") || args.Contains("-?"))
             {
                 ShowHelp();
             }
             else
             {
+                //Open the connection right on the start and keep open until we close the application.
                 using (var conn = new SQLiteConnection($"Data Source={DBNAME}"))
                 {
                     conn.Open();
+                    //Create tables if not exist
                     TorrentModel.CreateTable(conn);
                     if (args.Length > 0)
                     {
                         //CLI Mode
                         CLI.AttachConsole();
-                        //Import a file
+                        //Import a file via CLI
                         if (args.Length == 2 && args[0].ToUpper() == "/I")
                         {
                             if (File.Exists(args[1]))
@@ -45,6 +62,7 @@ namespace opb
                                 Console.Error.WriteLine("Import Failed: File does not exists");
                             }
                         }
+                        //Search for Torrents via CLI
                         else if (args.Length > 1)
                         {
                             if (args[0].ToUpper() == "/S" || (args[0].ToUpper() == "/H" && args[1].ToUpper() == "/S"))
@@ -79,6 +97,9 @@ namespace opb
             }
         }
 
+        /// <summary>
+        /// Shows Help on CLI
+        /// </summary>
         private static void ShowHelp()
         {
             Console.Error.WriteLine(@"{0} [/I <file> | [/H] /S <search>]

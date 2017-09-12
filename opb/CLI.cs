@@ -10,10 +10,20 @@ using System.Text.RegularExpressions;
 
 namespace opb
 {
+    /// <summary>
+    /// Command line utilities
+    /// </summary>
     public static class CLI
     {
+        /// <summary>
+        /// This is used to abort the import
+        /// </summary>
+        /// <remarks>Currently unused on CLI since it doesn't makes any threads</remarks>
         private static volatile bool Cont;
-
+        
+        /// <summary>
+        /// Attaches or creates a Console Window
+        /// </summary>
         public static void AttachConsole()
         {
             if (!Terminal.AttachToConsole(Terminal.PARENT))
@@ -22,16 +32,28 @@ namespace opb
             }
         }
 
+        /// <summary>
+        /// Detaches from the Console
+        /// </summary>
         public static void DetachConsole()
         {
             Terminal.RemoveConsole();
         }
 
+        /// <summary>
+        /// Aborts an Import
+        /// </summary>
         public static void AbortImport()
         {
             Cont = false;
         }
 
+        /// <summary>
+        /// Imports a file into the Database
+        /// </summary>
+        /// <param name="conn">Connection</param>
+        /// <param name="Filename">File</param>
+        /// <remarks>The file must be a gzip compressed CSV</remarks>
         public static void Import(SQLiteConnection conn, string Filename)
         {
             Cont = true;
@@ -109,6 +131,13 @@ namespace opb
             Cont = false;
         }
 
+        /// <summary>
+        /// Shows counts on the CLI
+        /// </summary>
+        /// <param name="total">Total records processed</param>
+        /// <param name="imported">Records imported</param>
+        /// <param name="skipped">Records skipped (duplicates)</param>
+        /// <param name="error">Records failed to parse/import</param>
         private static void ShowCount(int total, int imported, int skipped, int error)
         {
             var Pos = new {
@@ -119,6 +148,12 @@ namespace opb
             Console.SetCursorPosition(Pos.Left, Pos.Top);
         }
 
+        /// <summary>
+        /// Searches for Torrents
+        /// </summary>
+        /// <param name="conn">Connections</param>
+        /// <param name="SearchTerms">ALL/OR Search</param>
+        /// <returns>List of Torrents found</returns>
         public static TorrentModel[] Search(SQLiteConnection conn, string SearchTerms)
         {
             return TorrentModel.SearchAsync(conn, TorrentModel.SearchType.ALL, SearchTerms).Result;
