@@ -5,6 +5,11 @@ Offline Pirate Bay Browser
 
 This application allows you to browse the pirate bay offline.
 
+## Downloading OPB
+
+Either Download from the master branch and just run it,
+or go to [the releases page](https://github.com/AyrA/opb/releases) to get the latest precompiled version
+
 ## How to Download Torrents
 
 OPB **does not** contains a torrent client.
