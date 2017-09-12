@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,7 +17,16 @@ namespace opb
         /// <summary>
         /// Name of the database file
         /// </summary>
-        public const string DBNAME = "OPB.db3";
+        public static string DBNAME
+        {
+            get
+            {
+                using (var P = Process.GetCurrentProcess())
+                {
+                    return Path.Combine(Path.GetDirectoryName(P.MainModule.FileName),"OPB.DB3");
+                }
+            }
+        }
         /// <summary>
         /// Chars we use to split search terms
         /// </summary>
