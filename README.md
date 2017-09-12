@@ -18,6 +18,16 @@ If you prefer to use the TOR network: http://uj3wazyk5u4hnvtk.onion/static/dump/
 
 The TOR network download seems to be more stable as of now. Using normal Connections did terminate the download almost always for me.
 
+## CLI
+
+This Application can be started from the terminal
+
+    OPB.EXE /I <file> | [/H] /S <term>
+    
+    /I <file>    - Import the given file
+    /S <term>    - Searches for the given term and outputs name and hash
+    /H           - Don't output name, just hashes
+
 # TODO
 
 - [ ] Implement Export Feature
