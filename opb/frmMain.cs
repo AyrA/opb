@@ -114,7 +114,6 @@ namespace opb
             if (Content.Trim(Program.SPLITCHARS.ToCharArray()).Length > 0 && Content.Trim(Program.SPLITCHARS.ToCharArray()).Split(Program.SPLITCHARS.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length > 0)
             {
                 var Items = await TorrentModel.SearchAsync(conn, TorrentModel.SearchType.ALL, Content);
-                lblEntryCount.Text = $"{Items.Length} Entries found";
                 lvResults.BeginUpdate();
                 lvResults.Items.Clear();
                 foreach (var Entry in Items)
@@ -126,6 +125,13 @@ namespace opb
                 }
                 lvResults.EndUpdate();
                 lvResults.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                if (Items.Length > Program.MAXRESULTS)
+                {
+                    lblEntryCount.Text = $"More than {Program.MAXRESULTS} Entries found. List is truncated";
+                }
+                else {
+                    lblEntryCount.Text = $"{Items.Length} Entries found";
+                }
             }
         }
     }

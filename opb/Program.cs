@@ -31,6 +31,10 @@ namespace opb
         /// Chars we use to split search terms
         /// </summary>
         public const string SPLITCHARS = "\t \r\n,.-'\"(){}[]/\\+%";
+        /// <summary>
+        /// Maximum number of results to return
+        /// </summary>
+        public const int MAXRESULTS = 1000;
 
         /// <summary>
         /// Main entry point
@@ -41,7 +45,7 @@ namespace opb
         static void Main(string[] args)
         {
 #if DEBUG
-            args = new string[] { "/S", "GTA", "vice" };
+            //args = new string[] { "/S", "GTA", "vice" };
 #endif
             //Show help if requested
             if (args.Contains("/?") || args.Contains("--help") || args.Contains("-?"))

@@ -214,7 +214,8 @@ namespace opb
             {
                 //Very cheaply search for strings
                 cmd.CommandText = "SELECT * FROM Torrents WHERE " +
-                    string.Join($" {(Type == SearchType.ALL ? "AND" : "OR")} ", SearchQuery.Select(m => "Name LIKE ?"));
+                    string.Join($" {(Type == SearchType.ALL ? "AND" : "OR")} ", SearchQuery.Select(m => "Name LIKE ?")) +
+                    $" LIMIT {Program.MAXRESULTS + 1}";
                 SearchQuery
                     .Select(v => cmd.Parameters.AddWithValue(cmd.Parameters.Count.ToString(), v))
                     .ToArray();
@@ -328,7 +329,7 @@ namespace opb
         /// <remarks>Should always Return 1</remarks>
         private int Update(SQLiteConnection conn)
         {
-            return ExecCmd(conn, "UPDATE Torrents SET Hash=?,Name=?,UploadDate=?,Size=? WHERE Hash=?", Hash, Name, UploadDate.ToUniversalTime().Ticks, Size, Hash);
+            return ExecCmd(conn, "UPDATE Torrents SET Hash=?,Name=?,UploadDate=?,Size=? WHERE Hash=?", Hash.ToUpper(), Name, UploadDate.ToUniversalTime().Ticks, Size, Hash);
         }
 
         /// <summary>
@@ -339,7 +340,7 @@ namespace opb
         /// <remarks>Should always Return 1</remarks>
         private int Insert(SQLiteConnection conn)
         {
-            return ExecCmd(conn, "INSERT INTO Torrents (Hash,Name,UploadDate,Size) VALUES(?,?,?,?)", Hash, Name, UploadDate.ToUniversalTime().Ticks, Size);
+            return ExecCmd(conn, "INSERT INTO Torrents (Hash,Name,UploadDate,Size) VALUES(?,?,?,?)", Hash.ToUpper(), Name, UploadDate.ToUniversalTime().Ticks, Size);
         }
     }
 }
