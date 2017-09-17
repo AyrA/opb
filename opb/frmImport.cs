@@ -36,7 +36,7 @@ namespace opb
                     var Ret = new List<string>();
                     while (await rdr.ReadAsync())
                     {
-                        Ret.Add(rdr.GetString(0));
+                        Ret.Add(rdr.GetString(0).ToLower());
                     }
                     return Ret.ToArray();
                 }
@@ -58,7 +58,7 @@ namespace opb
             foreach (var H in ExistingHashes)
             {
                 var L = HashList[byte.Parse(H.Substring(0, 2), NumberStyles.HexNumber)];
-                L.Add(H);
+                L.Add(H.ToUpper());
                 ++total;
             }
             ShowCount(total, imported, skipped, error);
@@ -82,7 +82,7 @@ namespace opb
                                         var Model = new TorrentModel()
                                         {
                                             UploadDate = DateTime.Parse(Match.Groups[1].Value),
-                                            Hash = Tools.ToHex(Match.Groups[2].Value),
+                                            Hash = Tools.ToHex(Match.Groups[2].Value).ToUpper(),
                                             Name = Match.Groups[3].Value,
                                             Size = Tools.LongOrDefault(Match.Groups[4].Value)
                                         };
