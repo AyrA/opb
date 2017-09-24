@@ -258,7 +258,7 @@ namespace opb
             var Data = Encoding.UTF8.GetBytes(Content);
             try
             {
-                using (var Sender = new AnonymousPipeClientStream(PipeDirection.Out, "QuickTorrent_AddHash"))
+                using (var Sender = new NamedPipeClientStream(".", "QuickTorrent_AddHash", PipeDirection.Out))
                 {
                     Sender.Write(BitConverter.GetBytes(Data.Length), 0, 4);
                     Sender.Write(Data, 0, Data.Length);
