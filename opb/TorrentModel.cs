@@ -197,6 +197,16 @@ namespace opb
         }
 
         /// <summary>
+        /// HTML Decode function
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <returns>HTML Decoded Value</returns>
+        public static string HtmlDecode(string value)
+        {
+            System.Net.WebUtility.HtmlDecode(value);
+        }
+
+        /// <summary>
         /// Searches for Torrents
         /// </summary>
         /// <param name="conn">Connection</param>
