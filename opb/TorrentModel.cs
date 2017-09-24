@@ -48,6 +48,16 @@ namespace opb
         /// Total size of files contained in the torrent
         /// </summary>
         public long Size { get; set; }
+        /// <summary>
+        /// Magnet Link for Hash
+        /// </summary>
+        public string MagnetLink
+        {
+            get
+            {
+                return $"magnet:?xt=urn:btih:{Hash}&dn={Uri.EscapeDataString(Name)}";
+            }
+        }
 
         /// <summary>
         /// Creates an Empty torrent

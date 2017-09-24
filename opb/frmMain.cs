@@ -88,9 +88,7 @@ namespace opb
         {
             if (lvResults.SelectedItems.Count > 0)
             {
-                var Hash = lvResults.SelectedItems[0].SubItems[lvResults.SelectedItems[0].SubItems.Count - 1].Text;
-
-                Process.Start($"magnet:?xt=urn:btih:{Hash}&dn={Uri.EscapeDataString(lvResults.SelectedItems[0].Text)}");
+                Process.Start(((TorrentModel)lvResults.SelectedItems[0].Tag).MagnetLink);
             }
         }
 
