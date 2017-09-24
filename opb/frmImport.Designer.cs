@@ -73,7 +73,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnSelect;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Button btnCancel;
     }
