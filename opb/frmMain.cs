@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -93,6 +94,33 @@ namespace opb
             }
         }
 
+        private void lvResults_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.C:
+                        e.Handled = e.SuppressKeyPress = true;
+                        CopyItems();
+                        break;
+                    case Keys.A:
+                        e.Handled = e.SuppressKeyPress = true;
+                        lvResults.BeginUpdate();
+                        lvResults.SuspendLayout();
+                        lvResults.Items.OfType<ListViewItem>().ToList().ForEach(m => m.Selected = true);
+                        lvResults.ResumeLayout();
+                        lvResults.EndUpdate();
+                        break;
+                }
+            }
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopyItems();
+        }
+
         private async Task<int> GetCount()
         {
             lblEntryCount.Text = "Counting Entries";
@@ -129,9 +157,29 @@ namespace opb
                 {
                     lblEntryCount.Text = $"More than {Program.MAXRESULTS} Entries found. List is truncated";
                 }
-                else {
+                else
+                {
                     lblEntryCount.Text = $"{Items.Length} Entries found";
                 }
+                lvResults.Select();
+            }
+        }
+
+        private void CopyItems()
+        {
+            StringBuilder SB = new StringBuilder();
+            foreach (var item in lvResults.SelectedItems)
+            {
+                var I = (ListViewItem)item;
+                SB.AppendLine(I.SubItems[I.SubItems.Count - 1].Text);
+            }
+            try
+            {
+                Clipboard.SetText(SB.ToString());
+            }
+            catch
+            {
+                MessageBox.Show("Error copying Entries to clipboard");
             }
         }
     }

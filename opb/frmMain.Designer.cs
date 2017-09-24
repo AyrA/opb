@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tbSearch = new System.Windows.Forms.TextBox();
             this.btnSearch = new System.Windows.Forms.Button();
             this.lvResults = new System.Windows.Forms.ListView();
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chHash = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bottomStrip = new System.Windows.Forms.StatusStrip();
             this.lblEntryCount = new System.Windows.Forms.ToolStripStatusLabel();
@@ -42,14 +44,16 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitItem = new System.Windows.Forms.ToolStripMenuItem();
             this.databaseItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearDatabaseItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importDatabaseItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.vacuumItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearDatabaseItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OFD = new System.Windows.Forms.OpenFileDialog();
-            this.vacuumItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.CMS = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStrip.SuspendLayout();
             this.topStrip.SuspendLayout();
+            this.CMS.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbSearch
@@ -83,7 +87,9 @@
             this.chSize,
             this.chDate,
             this.chHash});
+            this.lvResults.ContextMenuStrip = this.CMS;
             this.lvResults.FullRowSelect = true;
+            this.lvResults.HideSelection = false;
             this.lvResults.Location = new System.Drawing.Point(12, 56);
             this.lvResults.Name = "lvResults";
             this.lvResults.Size = new System.Drawing.Size(922, 506);
@@ -91,6 +97,7 @@
             this.lvResults.UseCompatibleStateImageBehavior = false;
             this.lvResults.View = System.Windows.Forms.View.Details;
             this.lvResults.DoubleClick += new System.EventHandler(this.lvResults_DoubleClick);
+            this.lvResults.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvResults_KeyDown);
             // 
             // chName
             // 
@@ -101,6 +108,11 @@
             // 
             this.chSize.Text = "Size";
             this.chSize.Width = 80;
+            // 
+            // chDate
+            // 
+            this.chDate.Text = "Date";
+            this.chDate.Width = 120;
             // 
             // chHash
             // 
@@ -177,21 +189,29 @@
             this.databaseItem.Size = new System.Drawing.Size(67, 20);
             this.databaseItem.Text = "&Database";
             // 
-            // clearDatabaseItem
-            // 
-            this.clearDatabaseItem.Name = "clearDatabaseItem";
-            this.clearDatabaseItem.Size = new System.Drawing.Size(152, 22);
-            this.clearDatabaseItem.Text = "&Clear";
-            this.clearDatabaseItem.ToolTipText = "Completely empties the database";
-            this.clearDatabaseItem.Click += new System.EventHandler(this.clearDatabaseItem_Click);
-            // 
             // importDatabaseItem
             // 
             this.importDatabaseItem.Name = "importDatabaseItem";
-            this.importDatabaseItem.Size = new System.Drawing.Size(152, 22);
+            this.importDatabaseItem.Size = new System.Drawing.Size(118, 22);
             this.importDatabaseItem.Text = "&Import";
             this.importDatabaseItem.ToolTipText = "Imports new data into the database";
             this.importDatabaseItem.Click += new System.EventHandler(this.importDatabaseItem_Click);
+            // 
+            // vacuumItem
+            // 
+            this.vacuumItem.Name = "vacuumItem";
+            this.vacuumItem.Size = new System.Drawing.Size(118, 22);
+            this.vacuumItem.Text = "&Vacuum";
+            this.vacuumItem.ToolTipText = "Consolidates database to optimize speed";
+            this.vacuumItem.Click += new System.EventHandler(this.vacuumItem_Click);
+            // 
+            // clearDatabaseItem
+            // 
+            this.clearDatabaseItem.Name = "clearDatabaseItem";
+            this.clearDatabaseItem.Size = new System.Drawing.Size(118, 22);
+            this.clearDatabaseItem.Text = "&Clear";
+            this.clearDatabaseItem.ToolTipText = "Completely empties the database";
+            this.clearDatabaseItem.Click += new System.EventHandler(this.clearDatabaseItem_Click);
             // 
             // aboutItem
             // 
@@ -208,18 +228,20 @@
             this.OFD.SupportMultiDottedExtensions = true;
             this.OFD.Title = "Select Dump to import";
             // 
-            // vacuumItem
+            // CMS
             // 
-            this.vacuumItem.Name = "vacuumItem";
-            this.vacuumItem.Size = new System.Drawing.Size(152, 22);
-            this.vacuumItem.Text = "&Vacuum";
-            this.vacuumItem.ToolTipText = "Consolidates database to optimize speed";
-            this.vacuumItem.Click += new System.EventHandler(this.vacuumItem_Click);
+            this.CMS.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToolStripMenuItem});
+            this.CMS.Name = "CMS";
+            this.CMS.Size = new System.Drawing.Size(145, 26);
             // 
-            // chDate
+            // copyToolStripMenuItem
             // 
-            this.chDate.Text = "Date";
-            this.chDate.Width = 120;
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.copyToolStripMenuItem.Text = "&Copy";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // frmMain
             // 
@@ -239,6 +261,7 @@
             this.bottomStrip.PerformLayout();
             this.topStrip.ResumeLayout(false);
             this.topStrip.PerformLayout();
+            this.CMS.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -266,5 +289,7 @@
         private System.Windows.Forms.OpenFileDialog OFD;
         private System.Windows.Forms.ToolStripMenuItem vacuumItem;
         private System.Windows.Forms.ColumnHeader chDate;
+        private System.Windows.Forms.ContextMenuStrip CMS;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
     }
 }
