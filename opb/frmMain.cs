@@ -260,6 +260,7 @@ namespace opb
             {
                 using (var Sender = new NamedPipeClientStream(".", "QuickTorrent_AddHash", PipeDirection.Out))
                 {
+                    Sender.Connect(3000);
                     Sender.Write(BitConverter.GetBytes(Data.Length), 0, 4);
                     Sender.Write(Data, 0, Data.Length);
                     Sender.WaitForPipeDrain();
