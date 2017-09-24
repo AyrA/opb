@@ -98,18 +98,7 @@ namespace opb
             if (lvResults.SelectedItems.Count > 0)
             {
                 var Item = ((TorrentModel)lvResults.SelectedItems[0].Tag);
-                //Try to send to an open QuickTorrent process first
-                if (!SendViaPipe(Item.Hash))
-                {
-                    if (File.Exists(QuickTorrent))
-                    {
-                        Process.Start(QuickTorrent, Item.Hash);
-                    }
-                    else
-                    {
-                        Process.Start(Item.MagnetLink);
-                    }
-                }
+                Launch(Item);
             }
         }
 
@@ -131,6 +120,13 @@ namespace opb
                         lvResults.ResumeLayout();
                         lvResults.EndUpdate();
                         break;
+                }
+            }
+            else if (e.KeyCode == Keys.Enter && lvResults.SelectedItems.Count > 0)
+            {
+                foreach (var Item in lvResults.SelectedItems.OfType<ListViewItem>().Select(m => (TorrentModel)m.Tag))
+                {
+                    Launch(Item);
                 }
             }
         }
@@ -199,6 +195,40 @@ namespace opb
             }
         }
 
+        private void Launch(TorrentModel Item)
+        {
+            //Try to send to an open QuickTorrent process first
+            if (!SendViaPipe(Item.Hash))
+            {
+                if (File.Exists(QuickTorrent))
+                {
+                    using (var Proc = Process.Start(QuickTorrent, Item.Hash))
+                    {
+                        try
+                        {
+                            Proc.WaitForInputIdle(1000);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+                else
+                {
+                    using (var Proc = Process.Start(Item.MagnetLink))
+                    {
+                        try
+                        {
+                            Proc.WaitForInputIdle(1000);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
+        }
+
         private void CopyItems()
         {
             SetClipboard(string.Join("\r\n", lvResults
@@ -237,7 +267,7 @@ namespace opb
                 }
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, "OPB_PIPE");
                 return false;
