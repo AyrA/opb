@@ -51,6 +51,7 @@
             this.OFD = new System.Windows.Forms.OpenFileDialog();
             this.CMS = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStrip.SuspendLayout();
             this.topStrip.SuspendLayout();
             this.CMS.SuspendLayout();
@@ -150,6 +151,7 @@
             // fileItem
             // 
             this.fileItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyItem,
             this.exportResultItem,
             this.toolStripSeparator1,
             this.exitItem});
@@ -164,6 +166,7 @@
             this.exportResultItem.Size = new System.Drawing.Size(182, 22);
             this.exportResultItem.Text = "&Export Result";
             this.exportResultItem.ToolTipText = "Exports all currently shown entries";
+            this.exportResultItem.Click += new System.EventHandler(this.exportResultItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -239,9 +242,17 @@
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.copyToolStripMenuItem.Text = "&Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
+            // copyItem
+            // 
+            this.copyItem.Name = "copyItem";
+            this.copyItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyItem.Size = new System.Drawing.Size(182, 22);
+            this.copyItem.Text = "&Copy";
+            this.copyItem.Click += new System.EventHandler(this.copyItem_Click);
             // 
             // frmMain
             // 
@@ -291,5 +302,6 @@
         private System.Windows.Forms.ColumnHeader chDate;
         private System.Windows.Forms.ContextMenuStrip CMS;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyItem;
     }
 }

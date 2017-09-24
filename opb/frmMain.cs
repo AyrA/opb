@@ -121,6 +121,16 @@ namespace opb
             CopyItems();
         }
 
+        private void copyItem_Click(object sender, EventArgs e)
+        {
+            CopyItems();
+        }
+
+        private void exportResultItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private async Task<int> GetCount()
         {
             lblEntryCount.Text = "Counting Entries";
