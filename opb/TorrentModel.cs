@@ -203,7 +203,7 @@ namespace opb
         /// <returns>HTML Decoded Value</returns>
         public static string HtmlDecode(string value)
         {
-            System.Net.WebUtility.HtmlDecode(value);
+            return System.Net.WebUtility.HtmlDecode(value);
         }
 
         /// <summary>
