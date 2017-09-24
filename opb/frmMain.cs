@@ -157,6 +157,7 @@ namespace opb
                 foreach (var Entry in Items)
                 {
                     var Item = lvResults.Items.Add(Entry.Name);
+                    Item.Tag = Entry;
                     Item.SubItems.Add(Tools.Readable(Entry.Size));
                     Item.SubItems.Add(Entry.UploadDate.ToShortDateString());
                     Item.SubItems.Add(Entry.Hash);
@@ -177,15 +178,13 @@ namespace opb
 
         private void CopyItems()
         {
-            StringBuilder SB = new StringBuilder();
-            foreach (var item in lvResults.SelectedItems)
-            {
-                var I = (ListViewItem)item;
-                SB.AppendLine(I.SubItems[I.SubItems.Count - 1].Text);
-            }
             try
             {
-                Clipboard.SetText(SB.ToString());
+                Clipboard.SetText(string.Join("\r\n", lvResults
+                    .SelectedItems
+                    .OfType<ListViewItem>()
+                    .Select(m => ((TorrentModel)m.Tag)
+                    .Hash)));
             }
             catch
             {
