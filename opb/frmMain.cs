@@ -114,19 +114,23 @@ namespace opb
             }
         }
 
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CopyItems();
-        }
-
         private void copyItem_Click(object sender, EventArgs e)
         {
             CopyItems();
         }
 
-        private void exportResultItem_Click(object sender, EventArgs e)
+        private void exportAllItem_Click(object sender, EventArgs e)
         {
+            SetClipboard(
+                string.Join("\r\n",
+                lvResults.Items.OfType<ListViewItem>().Select(m => ((TorrentModel)m.Tag).Export())));
+        }
 
+        private void exportSelectedItem_Click(object sender, EventArgs e)
+        {
+            SetClipboard(
+                string.Join("\r\n",
+                lvResults.SelectedItems.OfType<ListViewItem>().Select(m => ((TorrentModel)m.Tag).Export())));
         }
 
         private async Task<int> GetCount()
@@ -176,17 +180,25 @@ namespace opb
 
         private void CopyItems()
         {
-            try
+            SetClipboard(string.Join("\r\n", lvResults
+                .SelectedItems
+                .OfType<ListViewItem>()
+                .Select(m => ((TorrentModel)m.Tag)
+                .Hash)));
+        }
+
+        private void SetClipboard(string Text)
+        {
+            if (Text != null && Text.Trim() != string.Empty)
             {
-                Clipboard.SetText(string.Join("\r\n", lvResults
-                    .SelectedItems
-                    .OfType<ListViewItem>()
-                    .Select(m => ((TorrentModel)m.Tag)
-                    .Hash)));
-            }
-            catch
-            {
-                MessageBox.Show("Error copying Entries to clipboard");
+                try
+                {
+                    Clipboard.SetText(Text);
+                }
+                catch
+                {
+                    MessageBox.Show("Error copying Entries to clipboard");
+                }
             }
         }
     }

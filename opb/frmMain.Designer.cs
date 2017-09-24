@@ -36,10 +36,13 @@
             this.chSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chHash = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.CMS = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStrip = new System.Windows.Forms.StatusStrip();
             this.lblEntryCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.topStrip = new System.Windows.Forms.MenuStrip();
             this.fileItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportResultItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,12 +52,11 @@
             this.clearDatabaseItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OFD = new System.Windows.Forms.OpenFileDialog();
-            this.CMS = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAllItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportSelectedItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CMS.SuspendLayout();
             this.bottomStrip.SuspendLayout();
             this.topStrip.SuspendLayout();
-            this.CMS.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbSearch
@@ -120,6 +122,22 @@
             this.chHash.Text = "Hash";
             this.chHash.Width = 300;
             // 
+            // CMS
+            // 
+            this.CMS.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToolStripMenuItem});
+            this.CMS.Name = "CMS";
+            this.CMS.Size = new System.Drawing.Size(145, 26);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.copyToolStripMenuItem.Text = "&Copy";
+            this.copyToolStripMenuItem.ToolTipText = "Copies selected Items";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyItem_Click);
+            // 
             // bottomStrip
             // 
             this.bottomStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -159,25 +177,35 @@
             this.fileItem.Size = new System.Drawing.Size(37, 20);
             this.fileItem.Text = "&File";
             // 
+            // copyItem
+            // 
+            this.copyItem.Name = "copyItem";
+            this.copyItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyItem.Size = new System.Drawing.Size(152, 22);
+            this.copyItem.Text = "&Copy";
+            this.copyItem.ToolTipText = "Copies selected Items";
+            this.copyItem.Click += new System.EventHandler(this.copyItem_Click);
+            // 
             // exportResultItem
             // 
+            this.exportResultItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportAllItem,
+            this.exportSelectedItem});
             this.exportResultItem.Name = "exportResultItem";
-            this.exportResultItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.exportResultItem.Size = new System.Drawing.Size(182, 22);
+            this.exportResultItem.Size = new System.Drawing.Size(152, 22);
             this.exportResultItem.Text = "&Export Result";
-            this.exportResultItem.ToolTipText = "Exports all currently shown entries";
-            this.exportResultItem.Click += new System.EventHandler(this.exportResultItem_Click);
+            this.exportResultItem.ToolTipText = "Exports results";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(179, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // exitItem
             // 
             this.exitItem.Name = "exitItem";
             this.exitItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.exitItem.Size = new System.Drawing.Size(182, 22);
+            this.exitItem.Size = new System.Drawing.Size(152, 22);
             this.exitItem.Text = "&Exit";
             this.exitItem.ToolTipText = "Exits the application";
             this.exitItem.Click += new System.EventHandler(this.exitItem_Click);
@@ -231,28 +259,24 @@
             this.OFD.SupportMultiDottedExtensions = true;
             this.OFD.Title = "Select Dump to import";
             // 
-            // CMS
+            // exportAllItem
             // 
-            this.CMS.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyToolStripMenuItem});
-            this.CMS.Name = "CMS";
-            this.CMS.Size = new System.Drawing.Size(145, 26);
+            this.exportAllItem.Name = "exportAllItem";
+            this.exportAllItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.E)));
+            this.exportAllItem.Size = new System.Drawing.Size(190, 22);
+            this.exportAllItem.Text = "&All";
+            this.exportAllItem.ToolTipText = "Exports all results";
+            this.exportAllItem.Click += new System.EventHandler(this.exportAllItem_Click);
             // 
-            // copyToolStripMenuItem
+            // exportSelectedItem
             // 
-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
-            this.copyToolStripMenuItem.Text = "&Copy";
-            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
-            // 
-            // copyItem
-            // 
-            this.copyItem.Name = "copyItem";
-            this.copyItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyItem.Size = new System.Drawing.Size(182, 22);
-            this.copyItem.Text = "&Copy";
-            this.copyItem.Click += new System.EventHandler(this.copyItem_Click);
+            this.exportSelectedItem.Name = "exportSelectedItem";
+            this.exportSelectedItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+            this.exportSelectedItem.Size = new System.Drawing.Size(190, 22);
+            this.exportSelectedItem.Text = "&Selected Items";
+            this.exportSelectedItem.ToolTipText = "Exports selected Items";
+            this.exportSelectedItem.Click += new System.EventHandler(this.exportSelectedItem_Click);
             // 
             // frmMain
             // 
@@ -268,11 +292,11 @@
             this.Name = "frmMain";
             this.Text = "Offline Pirate Bay";
             this.Shown += new System.EventHandler(this.frmMain_Shown);
+            this.CMS.ResumeLayout(false);
             this.bottomStrip.ResumeLayout(false);
             this.bottomStrip.PerformLayout();
             this.topStrip.ResumeLayout(false);
             this.topStrip.PerformLayout();
-            this.CMS.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -303,5 +327,7 @@
         private System.Windows.Forms.ContextMenuStrip CMS;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyItem;
+        private System.Windows.Forms.ToolStripMenuItem exportAllItem;
+        private System.Windows.Forms.ToolStripMenuItem exportSelectedItem;
     }
 }

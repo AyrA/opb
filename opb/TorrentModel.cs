@@ -313,6 +313,16 @@ namespace opb
         }
 
         /// <summary>
+        /// Exports the entry into a CSV-Like Line
+        /// </summary>
+        /// <param name="MagnetLink">Export Magnet Link instead of Hash</param>
+        /// <returns>Exported Line</returns>
+        public string Export(bool ExportMagnetLink = false)
+        {
+            return $"{Name}\t{UploadDate}\t{Size}\t{(ExportMagnetLink ? MagnetLink : Hash)}";
+        }
+
+        /// <summary>
         /// Saves this Torrent to the Database
         /// </summary>
         /// <param name="conn">Connection</param>
