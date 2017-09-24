@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +14,16 @@ namespace opb
     {
         private SQLiteConnection conn;
 
+        private string QuickTorrent;
+
+
         public frmMain(SQLiteConnection conn)
         {
             this.conn = conn;
+            using (var P = Process.GetCurrentProcess())
+            {
+                QuickTorrent = Path.GetDirectoryName(P.MainModule.FileName) + @"\QuickTorrent.exe";
+            }
             InitializeComponent();
         }
 
@@ -88,7 +97,19 @@ namespace opb
         {
             if (lvResults.SelectedItems.Count > 0)
             {
-                Process.Start(((TorrentModel)lvResults.SelectedItems[0].Tag).MagnetLink);
+                var Item = ((TorrentModel)lvResults.SelectedItems[0].Tag);
+                //Try to send to an open QuickTorrent process first
+                if (!SendViaPipe(Item.Hash))
+                {
+                    if (File.Exists(QuickTorrent))
+                    {
+                        Process.Start(QuickTorrent, Item.Hash);
+                    }
+                    else
+                    {
+                        Process.Start(Item.MagnetLink);
+                    }
+                }
             }
         }
 
@@ -199,6 +220,27 @@ namespace opb
                 {
                     MessageBox.Show("Error copying Entries to clipboard");
                 }
+            }
+        }
+
+        private bool SendViaPipe(string Content)
+        {
+            var Data = Encoding.UTF8.GetBytes(Content);
+            try
+            {
+                using (var Sender = new AnonymousPipeClientStream(PipeDirection.Out, "QuickTorrent_AddHash"))
+                {
+                    Sender.Write(BitConverter.GetBytes(Data.Length), 0, 4);
+                    Sender.Write(Data, 0, Data.Length);
+                    Sender.WaitForPipeDrain();
+                    Sender.Close();
+                }
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message, "OPB_PIPE");
+                return false;
             }
         }
     }
