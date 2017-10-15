@@ -44,6 +44,8 @@
             this.fileItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportResultItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAllItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportSelectedItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitItem = new System.Windows.Forms.ToolStripMenuItem();
             this.databaseItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,8 +54,6 @@
             this.clearDatabaseItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OFD = new System.Windows.Forms.OpenFileDialog();
-            this.exportAllItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportSelectedItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CMS.SuspendLayout();
             this.bottomStrip.SuspendLayout();
             this.topStrip.SuspendLayout();
@@ -127,15 +127,15 @@
             this.CMS.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyToolStripMenuItem});
             this.CMS.Name = "CMS";
-            this.CMS.Size = new System.Drawing.Size(145, 26);
+            this.CMS.Size = new System.Drawing.Size(153, 48);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.copyToolStripMenuItem.Text = "&Copy";
-            this.copyToolStripMenuItem.ToolTipText = "Copies selected Items";
+            this.copyToolStripMenuItem.ToolTipText = "Copies the Hash of selected Items";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyItem_Click);
             // 
             // bottomStrip
@@ -176,6 +176,7 @@
             this.fileItem.Name = "fileItem";
             this.fileItem.Size = new System.Drawing.Size(37, 20);
             this.fileItem.Text = "&File";
+            this.fileItem.ToolTipText = "General Functionalities";
             // 
             // copyItem
             // 
@@ -183,7 +184,7 @@
             this.copyItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.copyItem.Size = new System.Drawing.Size(152, 22);
             this.copyItem.Text = "&Copy";
-            this.copyItem.ToolTipText = "Copies selected Items";
+            this.copyItem.ToolTipText = "Copies the Hash of selected Items";
             this.copyItem.Click += new System.EventHandler(this.copyItem_Click);
             // 
             // exportResultItem
@@ -194,7 +195,26 @@
             this.exportResultItem.Name = "exportResultItem";
             this.exportResultItem.Size = new System.Drawing.Size(152, 22);
             this.exportResultItem.Text = "&Export Result";
-            this.exportResultItem.ToolTipText = "Exports results";
+            this.exportResultItem.ToolTipText = "Exports name, size, date and Hash";
+            // 
+            // exportAllItem
+            // 
+            this.exportAllItem.Name = "exportAllItem";
+            this.exportAllItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.E)));
+            this.exportAllItem.Size = new System.Drawing.Size(190, 22);
+            this.exportAllItem.Text = "&All";
+            this.exportAllItem.ToolTipText = "Exports all results";
+            this.exportAllItem.Click += new System.EventHandler(this.exportAllItem_Click);
+            // 
+            // exportSelectedItem
+            // 
+            this.exportSelectedItem.Name = "exportSelectedItem";
+            this.exportSelectedItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+            this.exportSelectedItem.Size = new System.Drawing.Size(190, 22);
+            this.exportSelectedItem.Text = "&Selected Items";
+            this.exportSelectedItem.ToolTipText = "Exports selected Items";
+            this.exportSelectedItem.Click += new System.EventHandler(this.exportSelectedItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -219,11 +239,12 @@
             this.databaseItem.Name = "databaseItem";
             this.databaseItem.Size = new System.Drawing.Size(67, 20);
             this.databaseItem.Text = "&Database";
+            this.databaseItem.ToolTipText = "Database Operations";
             // 
             // importDatabaseItem
             // 
             this.importDatabaseItem.Name = "importDatabaseItem";
-            this.importDatabaseItem.Size = new System.Drawing.Size(118, 22);
+            this.importDatabaseItem.Size = new System.Drawing.Size(152, 22);
             this.importDatabaseItem.Text = "&Import";
             this.importDatabaseItem.ToolTipText = "Imports new data into the database";
             this.importDatabaseItem.Click += new System.EventHandler(this.importDatabaseItem_Click);
@@ -231,7 +252,7 @@
             // vacuumItem
             // 
             this.vacuumItem.Name = "vacuumItem";
-            this.vacuumItem.Size = new System.Drawing.Size(118, 22);
+            this.vacuumItem.Size = new System.Drawing.Size(152, 22);
             this.vacuumItem.Text = "&Vacuum";
             this.vacuumItem.ToolTipText = "Consolidates database to optimize speed";
             this.vacuumItem.Click += new System.EventHandler(this.vacuumItem_Click);
@@ -239,7 +260,7 @@
             // clearDatabaseItem
             // 
             this.clearDatabaseItem.Name = "clearDatabaseItem";
-            this.clearDatabaseItem.Size = new System.Drawing.Size(118, 22);
+            this.clearDatabaseItem.Size = new System.Drawing.Size(152, 22);
             this.clearDatabaseItem.Text = "&Clear";
             this.clearDatabaseItem.ToolTipText = "Completely empties the database";
             this.clearDatabaseItem.Click += new System.EventHandler(this.clearDatabaseItem_Click);
@@ -258,25 +279,6 @@
             this.OFD.Filter = "Compressed Directory|*.csv.gz";
             this.OFD.SupportMultiDottedExtensions = true;
             this.OFD.Title = "Select Dump to import";
-            // 
-            // exportAllItem
-            // 
-            this.exportAllItem.Name = "exportAllItem";
-            this.exportAllItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.E)));
-            this.exportAllItem.Size = new System.Drawing.Size(190, 22);
-            this.exportAllItem.Text = "&All";
-            this.exportAllItem.ToolTipText = "Exports all results";
-            this.exportAllItem.Click += new System.EventHandler(this.exportAllItem_Click);
-            // 
-            // exportSelectedItem
-            // 
-            this.exportSelectedItem.Name = "exportSelectedItem";
-            this.exportSelectedItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.exportSelectedItem.Size = new System.Drawing.Size(190, 22);
-            this.exportSelectedItem.Text = "&Selected Items";
-            this.exportSelectedItem.ToolTipText = "Exports selected Items";
-            this.exportSelectedItem.Click += new System.EventHandler(this.exportSelectedItem_Click);
             // 
             // frmMain
             // 

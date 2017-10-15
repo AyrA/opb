@@ -16,7 +16,6 @@ namespace opb
 
         private string QuickTorrent;
 
-
         public frmMain(SQLiteConnection conn)
         {
             this.conn = conn;
