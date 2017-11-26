@@ -54,7 +54,7 @@ namespace opb
 
             var Regex = new Regex(Program.REGEX);
             var HashList = Enumerable.Range(0, 256).Select(m => new List<string>()).ToArray();
-            SetStatus("Reading existing entries...");
+            SetStatus("Reading existing entries...", 0);
             var ExistingHashes = GetHashes().Result;
             foreach (var H in ExistingHashes)
             {
@@ -62,7 +62,7 @@ namespace opb
                 L.Add(H.ToUpper());
             }
             total = HashList.Sum(m => m.Count);
-            ShowCount(total, imported, skipped, error);
+            ShowCount(total, imported, skipped, error, 0);
 
             using (var FS = File.OpenRead(Filename))
             {
@@ -107,7 +107,7 @@ namespace opb
                                         }
                                         if (++total % 500 == 0)
                                         {
-                                            ShowCount(total, imported, skipped, error);
+                                            ShowCount(total, imported, skipped, error, (int)(FS.Position * 100 / FS.Length));
                                         }
                                     }
                                 }
@@ -119,28 +119,30 @@ namespace opb
             }
             if (Cont)
             {
-                SetStatus("Import complete");
+                SetStatus("Import complete", 100);
                 Invoke((MethodInvoker)delegate () { btnCancel.Enabled = false; });
             }
             Cont = false;
         }
 
-        private void ShowCount(int total, int imported, int skipped, int error)
+        private void ShowCount(int TotalEntries, int ImportedEntries, int SkippedEntries, int ErrorCount, int Percentage)
         {
-            SetStatus($"Total: {total} | Imported: {imported} | Skipped: {skipped} | Error: {error}");
+            SetStatus($"Total: {TotalEntries} | Imported: {ImportedEntries} | Skipped: {SkippedEntries} | Error: {ErrorCount}", Percentage);
         }
 
-        private void SetStatus(string Message)
+        private void SetStatus(string Message, int Percentage)
         {
             if (InvokeRequired)
             {
                 Invoke((MethodInvoker)delegate {
-                    SetStatus(Message);
+                    SetStatus(Message, Percentage);
                 });
             }
             else
             {
                 lblStatus.Text = Message;
+                Percentage = Percentage < 0 ? 0 : (Percentage > 100 ? 100 : Percentage);
+                pbStatus.Value = Percentage;
             }
         }
 
