@@ -30,6 +30,7 @@
         {
             this.lblStatus = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.pbStatus = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // lblStatus
@@ -52,12 +53,23 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // pbStatus
+            // 
+            this.pbStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbStatus.Location = new System.Drawing.Point(12, 50);
+            this.pbStatus.Name = "pbStatus";
+            this.pbStatus.Size = new System.Drawing.Size(460, 23);
+            this.pbStatus.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.pbStatus.TabIndex = 3;
+            // 
             // frmImport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(484, 52);
+            this.ClientSize = new System.Drawing.Size(484, 85);
+            this.Controls.Add(this.pbStatus);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.lblStatus);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -75,5 +87,6 @@
 
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.ProgressBar pbStatus;
     }
 }
