@@ -120,7 +120,13 @@ namespace opb
             if (Cont)
             {
                 SetStatus("Import complete", 100);
-                Invoke((MethodInvoker)delegate () { btnCancel.Enabled = false; });
+                Invoke((MethodInvoker)delegate ()
+                {
+                    Cont = false;
+                    MessageBox.Show($"Import is complete. Result:\r\n{total} processed Entries\r\n{imported} new Torrents", "Import Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    btnCancel.Enabled = false;
+                    Close();
+                });
             }
             Cont = false;
         }
@@ -134,7 +140,8 @@ namespace opb
         {
             if (InvokeRequired)
             {
-                Invoke((MethodInvoker)delegate {
+                Invoke((MethodInvoker)delegate
+                {
                     SetStatus(Message, Percentage);
                 });
             }
@@ -166,6 +173,8 @@ namespace opb
                 }
                 else if (MessageBox.Show("Abort current import?", "Abort import", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
+                    lblStatus.Text = "Aborting...";
+                    btnCancel.Enabled = false;
                     Cont = false;
                     if (!T.Join(5000))
                     {
@@ -175,7 +184,7 @@ namespace opb
                         }
                         catch
                         {
-                            MessageBox.Show("Thread refused to exit and was forcefully aborted!");
+                            MessageBox.Show("Thread refused to exit and was forcefully aborted!\r\nAn Application restart is recommended.", "Thread not responding", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         }
                     }
                 }
