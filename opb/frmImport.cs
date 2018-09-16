@@ -51,75 +51,97 @@ namespace opb
             int skipped = 0;
             int error = 0;
             int total = 0;
-
+            bool compressed = false;
             var Regex = new Regex(Program.REGEX);
             var HashList = Enumerable.Range(0, 256).Select(m => new List<string>()).ToArray();
-            SetStatus("Reading existing entries...", 0);
+            SetStatus("Reading existing entries...", 0.0);
             var ExistingHashes = GetHashes().Result;
             foreach (var H in ExistingHashes)
             {
                 var L = HashList[byte.Parse(H.Substring(0, 2), NumberStyles.HexNumber)];
                 L.Add(H.ToUpper());
             }
-            total = HashList.Sum(m => m.Count);
-            ShowCount(total, imported, skipped, error, 0);
+            ShowCount(total, imported, skipped, error, 0.0);
 
             using (var FS = File.OpenRead(Filename))
             {
-                using (var GZS = new GZipStream(FS, CompressionMode.Decompress))
+                //gzip header is 10 bytes long at least
+                if (FS.Length > 9)
                 {
-                    using (var rdr = new StreamReader(GZS))
+                    byte[] Magic = new byte[] { (byte)FS.ReadByte(), (byte)FS.ReadByte() };
+                    compressed = Magic[0] == 0x1F && Magic[1] == 0x8B;
+                    FS.Position = 0;
+                }
+                Stream Inner;
+                if (compressed)
+                {
+                    //Disposing the StreamReader will also dispose the referenced stream.
+                    //No need for a dispose of this
+                    Inner = new GZipStream(FS, CompressionMode.Decompress);
+                }
+                else
+                {
+                    Inner = FS;
+                }
+                using (var rdr = new StreamReader(Inner))
+                {
+                    using (var Transaction = conn.BeginTransaction())
                     {
-                        using (var Transaction = conn.BeginTransaction())
+                        while (!rdr.EndOfStream && Cont)
                         {
-                            while (!rdr.EndOfStream && Cont)
+                            var Line = rdr.ReadLine().Trim();
+                            ++total;
+                            if (!Line.StartsWith("#"))
                             {
-                                var Line = rdr.ReadLine().Trim();
-                                if (!Line.StartsWith("#"))
+                                var Match = Regex.Match(Line);
+                                if (Match != null && Match.Length > 0)
                                 {
-                                    var Match = Regex.Match(Line);
-                                    if (Match != null && Match.Length > 0)
+                                    var Model = new TorrentModel()
                                     {
-                                        var Model = new TorrentModel()
+                                        UploadDate = DateTime.Parse(Match.Groups[1].Value),
+                                        Hash = Tools.ToHex(Match.Groups[2].Value).ToUpper(),
+                                        Name = TorrentModel.HtmlDecode(Match.Groups[3].Value),
+                                        Size = Tools.LongOrDefault(Match.Groups[4].Value)
+                                    };
+                                    var L = HashList[byte.Parse(Model.Hash.Substring(0, 2), NumberStyles.HexNumber)];
+                                    if (Model.Size >= 0 && Model.Hash.Length == 40)
+                                    {
+                                        if (!L.Contains(Model.Hash))
                                         {
-                                            UploadDate = DateTime.Parse(Match.Groups[1].Value),
-                                            Hash = Tools.ToHex(Match.Groups[2].Value).ToUpper(),
-                                            Name = TorrentModel.HtmlDecode(Match.Groups[3].Value),
-                                            Size = Tools.LongOrDefault(Match.Groups[4].Value)
-                                        };
-                                        var L = HashList[byte.Parse(Model.Hash.Substring(0, 2), NumberStyles.HexNumber)];
-                                        if (Model.Size >= 0)
-                                        {
-                                            if (!L.Contains(Model.Hash))
-                                            {
-                                                Model.Save(conn);
-                                                L.Add(Model.Hash);
-                                                ++imported;
-                                            }
-                                            else
-                                            {
-                                                ++skipped;
-                                            }
+                                            Model.Save(conn);
+                                            L.Add(Model.Hash);
+                                            ++imported;
                                         }
                                         else
                                         {
-                                            ++error;
-                                        }
-                                        if (++total % 500 == 0)
-                                        {
-                                            ShowCount(total, imported, skipped, error, (int)(FS.Position * 100 / FS.Length));
+                                            ++skipped;
                                         }
                                     }
+                                    else
+                                    {
+                                        ++error;
+#if DEBUG
+                                        throw new Exception($"Invalid Model: {Model.Hash} ({Match.Groups[2].Value})");
+#endif
+                                    }
+                                    if (total % 500 == 0)
+                                    {
+                                        ShowCount(total, imported, skipped, error, FS.Position * 1.0 / FS.Length);
+                                    }
+                                }
+                                else
+                                {
+                                    ++error;
                                 }
                             }
-                            Transaction.Commit();
                         }
+                        Transaction.Commit();
                     }
                 }
             }
             if (Cont)
             {
-                SetStatus("Import complete", 100);
+                SetStatus("Import complete", 1.0);
                 Invoke((MethodInvoker)delegate ()
                 {
                     Cont = false;
@@ -131,25 +153,25 @@ namespace opb
             Cont = false;
         }
 
-        private void ShowCount(int TotalEntries, int ImportedEntries, int SkippedEntries, int ErrorCount, int Percentage)
+        private void ShowCount(int TotalEntries, int ImportedEntries, int SkippedEntries, int ErrorCount, double PercFactor)
         {
-            SetStatus($"Total: {TotalEntries} | Imported: {ImportedEntries} | Skipped: {SkippedEntries} | Error: {ErrorCount}", Percentage);
+            SetStatus($"Total: {TotalEntries} | Imported: {ImportedEntries} | Skipped: {SkippedEntries} | Error: {ErrorCount}", PercFactor);
         }
 
-        private void SetStatus(string Message, int Percentage)
+        private void SetStatus(string Message, double PercFactor)
         {
             if (InvokeRequired)
             {
                 Invoke((MethodInvoker)delegate
                 {
-                    SetStatus(Message, Percentage);
+                    SetStatus(Message, PercFactor);
                 });
             }
             else
             {
                 lblStatus.Text = Message;
-                Percentage = Percentage < 0 ? 0 : (Percentage > 100 ? 100 : Percentage);
-                pbStatus.Value = Percentage;
+                PercFactor = Math.Min(Math.Max(PercFactor, 0.0), 1.0);
+                pbStatus.Value = (int)(PercFactor * pbStatus.Maximum);
             }
         }
 

@@ -20,7 +20,7 @@ namespace opb
         /// </summary>
         /// <remarks>Currently unused on CLI since it doesn't makes any threads</remarks>
         private static volatile bool Cont;
-        
+
         /// <summary>
         /// Attaches or creates a Console Window
         /// </summary>
@@ -61,6 +61,7 @@ namespace opb
             int skipped = 0;
             int error = 0;
             int total = 0;
+            bool compressed = false;
 
             var Regex = new Regex(Program.REGEX);
             var HashList = Enumerable.Range(0, 256).Select(m => new List<string>()).ToArray();
@@ -76,54 +77,69 @@ namespace opb
 
             using (var FS = File.OpenRead(Filename))
             {
-                using (var GZS = new GZipStream(FS, CompressionMode.Decompress))
+                //gzip header is 10 bytes long at least
+                if (FS.Length > 9)
                 {
-                    using (var rdr = new StreamReader(GZS))
+                    byte[] Magic = new byte[] { (byte)FS.ReadByte(), (byte)FS.ReadByte() };
+                    compressed = Magic[0] == 0x1F && Magic[1] == 0x8B;
+                    FS.Position = 0;
+                }
+                Stream Inner;
+                if (compressed)
+                {
+                    //Disposing the StreamReader will also dispose the referenced stream.
+                    //No need for a dispose of this
+                    Inner = new GZipStream(FS, CompressionMode.Decompress);
+                }
+                else
+                {
+                    Inner = FS;
+                }
+                using (var rdr = new StreamReader(Inner))
+                {
+                    using (var Transaction = conn.BeginTransaction())
                     {
-                        using (var Transaction = conn.BeginTransaction())
+                        while (!rdr.EndOfStream && Cont)
                         {
-                            while (!rdr.EndOfStream && Cont)
+                            var Line = rdr.ReadLine().Trim();
+                            if (!Line.StartsWith("#"))
                             {
-                                var Line = rdr.ReadLine().Trim();
-                                if (!Line.StartsWith("#"))
+                                var Match = Regex.Match(Line);
+                                if (Match != null && Match.Length > 0)
                                 {
-                                    var Match = Regex.Match(Line);
-                                    if (Match != null && Match.Length > 0)
+                                    var Model = new TorrentModel()
                                     {
-                                        var Model = new TorrentModel()
+                                        UploadDate = DateTime.Parse(Match.Groups[1].Value),
+                                        Hash = Tools.ToHex(Match.Groups[2].Value),
+                                        Name = Match.Groups[3].Value,
+                                        Size = Tools.LongOrDefault(Match.Groups[4].Value)
+                                    };
+                                    var L = HashList[byte.Parse(Model.Hash.Substring(0, 2), NumberStyles.HexNumber)];
+                                    if (Model.Size >= 0)
+                                    {
+                                        if (!L.Contains(Model.Hash))
                                         {
-                                            UploadDate = DateTime.Parse(Match.Groups[1].Value),
-                                            Hash = Tools.ToHex(Match.Groups[2].Value),
-                                            Name = Match.Groups[3].Value,
-                                            Size = Tools.LongOrDefault(Match.Groups[4].Value)
-                                        };
-                                        var L = HashList[byte.Parse(Model.Hash.Substring(0, 2), NumberStyles.HexNumber)];
-                                        if (Model.Size >= 0)
-                                        {
-                                            if (!L.Contains(Model.Hash))
-                                            {
-                                                Model.Save(conn);
-                                                L.Add(Model.Hash);
-                                                ++imported;
-                                            }
-                                            else
-                                            {
-                                                ++skipped;
-                                            }
+                                            Model.Save(conn);
+                                            L.Add(Model.Hash);
+                                            ++imported;
                                         }
                                         else
                                         {
-                                            ++error;
+                                            ++skipped;
                                         }
-                                        if (++total % 500 == 0)
-                                        {
-                                            ShowCount(total, imported, skipped, error);
-                                        }
+                                    }
+                                    else
+                                    {
+                                        ++error;
+                                    }
+                                    if (++total % 500 == 0)
+                                    {
+                                        ShowCount(total, imported, skipped, error);
                                     }
                                 }
                             }
-                            Transaction.Commit();
                         }
+                        Transaction.Commit();
                     }
                 }
             }
@@ -140,7 +156,8 @@ namespace opb
         /// <param name="error">Records failed to parse/import</param>
         private static void ShowCount(int total, int imported, int skipped, int error)
         {
-            var Pos = new {
+            var Pos = new
+            {
                 Left = Console.CursorLeft,
                 Top = Console.CursorTop
             };

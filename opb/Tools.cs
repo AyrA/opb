@@ -11,42 +11,42 @@ namespace opb
         /// <summary>
         /// Converts a base64 String to Hex
         /// </summary>
-        /// <param name="value">Base64 string</param>
+        /// <param name="Value">Base64 string</param>
         /// <returns>Hex string</returns>
-        public static string ToHex(string value)
+        public static string ToHex(string Value)
         {
-            var bytes = string.Concat(Convert.FromBase64String(value).Select(m => m.ToString("X2")));
+            var bytes = string.Concat(Convert.FromBase64String(Value).Select(m => m.ToString("X2")));
             return bytes;
         }
 
         /// <summary>
         /// Returns a long from a string
         /// </summary>
-        /// <param name="value">String to test</param>
+        /// <param name="Value">String to test</param>
         /// <returns>Parsed value, or -1 on error</returns>
-        public static long LongOrDefault(string value)
+        public static long LongOrDefault(string Value, long Default = -1)
         {
-            long l = -1;
-            return long.TryParse(value, out l) ? l : -1;
+            long l = Default;
+            return long.TryParse(Value, out l) ? l : Default;
         }
 
         /// <summary>
         /// Turns a size into readable units
         /// </summary>
-        /// <param name="size">Size in Bytes</param>
+        /// <param name="Size">Size in Bytes</param>
         /// <returns>Readable Size</returns>
-        public static string Readable(long size)
+        public static string Readable(long Size, int Decimals = 1)
         {
             const double FACTOR = 1024.0;
             var Sizes = "Bytes,KB,MB,GB,TB".Split(',');
-            int current = 0;
-            double NewSize = size;
-            while (current < Sizes.Length - 1 && NewSize >= FACTOR)
+            int CurrentFactor = 0;
+            double NewSize = Size;
+            while (CurrentFactor < Sizes.Length - 1 && NewSize >= FACTOR)
             {
-                ++current;
+                ++CurrentFactor;
                 NewSize /= FACTOR;
             }
-            return $"{Math.Round(NewSize, 1)} {Sizes[current]}";
+            return $"{Math.Round(NewSize, Decimals)} {Sizes[CurrentFactor]}";
         }
     }
 }

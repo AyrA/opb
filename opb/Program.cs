@@ -9,11 +9,22 @@ namespace opb
 {
     class Program
     {
+        private static string _dbname;
+
         /// <summary>
-        /// Regex to match one line
+        /// Chars we use to split search terms
+        /// </summary>
+        public const string SPLITCHARS = "\t \r\n,.-'\"(){}[]/\\+%";
+        /// <summary>
+        /// Regex to match one line of CSV
         /// </summary>
         /// <remarks>Individual Years have categories with their torrents which we ignore</remarks>
         public const string REGEX = "^(.*);(.*);\"(.*)\";(\\d*)(;\\d*)?$";
+        /// <summary>
+        /// Maximum number of results to return
+        /// </summary>
+        public const int MAXRESULTS = 1000;
+
         /// <summary>
         /// Name of the database file
         /// </summary>
@@ -21,20 +32,16 @@ namespace opb
         {
             get
             {
-                using (var P = Process.GetCurrentProcess())
+                if (string.IsNullOrEmpty(_dbname))
                 {
-                    return Path.Combine(Path.GetDirectoryName(P.MainModule.FileName),"OPB.DB3");
+                    using (var P = Process.GetCurrentProcess())
+                    {
+                        _dbname = Path.Combine(Path.GetDirectoryName(P.MainModule.FileName), "OPB.DB3");
+                    }
                 }
+                return _dbname;
             }
         }
-        /// <summary>
-        /// Chars we use to split search terms
-        /// </summary>
-        public const string SPLITCHARS = "\t \r\n,.-'\"(){}[]/\\+%";
-        /// <summary>
-        /// Maximum number of results to return
-        /// </summary>
-        public const int MAXRESULTS = 1000;
 
         /// <summary>
         /// Main entry point
@@ -44,9 +51,6 @@ namespace opb
         [STAThread]
         static void Main(string[] args)
         {
-#if DEBUG
-            //args = new string[] { "/S", "GTA", "vice" };
-#endif
             //Show help if requested
             if (args.Contains("/?") || args.Contains("--help") || args.Contains("-?"))
             {

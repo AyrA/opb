@@ -58,6 +58,7 @@
             this.pbStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbStatus.Location = new System.Drawing.Point(12, 50);
+            this.pbStatus.Maximum = 1000;
             this.pbStatus.Name = "pbStatus";
             this.pbStatus.Size = new System.Drawing.Size(460, 23);
             this.pbStatus.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
